@@ -193,8 +193,6 @@ FRONTEND_ORIGIN=http://localhost:5173
 VITE_API_BASE=http://127.0.0.1:8000
 ```
 
-Do not commit `.env`. It is intentionally ignored by Git.
-
 ### 3. Run Backend
 
 Open one terminal:
@@ -252,19 +250,6 @@ Then open:
 ```text
 http://localhost:5173
 ```
-
-### Troubleshooting
-
-If the project folder is moved, recreate the backend virtual environment because `.venv` contains absolute paths:
-
-```bash
-cd backend
-python -m venv --clear .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-If port `8000` or `5173` is already in use, stop the old backend/frontend process or run the service on another port and update `VITE_API_BASE` if needed.
 
 ## API Endpoints
 
