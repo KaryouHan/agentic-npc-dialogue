@@ -14,7 +14,7 @@ This project is designed to demonstrate more than a normal chatbot: the NPC has 
 - LangGraph workflow with separate Memory, Emotion, Action, Quest, Dialogue, and State Update agents
 - SQLite persistence for dialogue history, memories, and current NPC state
 - Structured JSON response for every turn
-- Frontend Agent Decision Log that exposes the agent workflow for demos and interviews
+- Frontend Agent Decision Log that exposes the workflow for debugging and transparency
 - Reset button for replaying the scenario from the initial state
 
 ## Scenario
@@ -277,8 +277,4 @@ Clears the demo conversation and restores the initial NPC state.
 
 This demo shows how LLMs can be used as part of a controllable game AI system rather than as a plain chat interface. By separating memory, emotion, action, quest, and dialogue responsibilities, the NPC becomes easier to inspect, debug, and extend.
 
-The visible Agent Decision Log is especially useful for explaining the architecture during interviews or portfolio reviews.
-
-## Resume Bullet
-
-LLM Agentを用いて、NPCの感情状態・記憶・クエスト進行・行動選択を統合的に管理するゲームNPC対話システムを開発。FastAPI、LangGraph、SQLite、Reactを用いて、プレイヤー入力に応じた自然な会話生成と状態遷移を実現した。
+The visible Agent Decision Log also makes it easier to inspect how each turn changes memory, emotion, action, and quest state.
