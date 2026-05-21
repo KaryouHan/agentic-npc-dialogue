@@ -162,7 +162,21 @@ agentic-npc-dialogue/
 
 ## Setup
 
-### 1. Configure Environment
+### Prerequisites
+
+- Python 3.10+
+- Node.js 20+ and npm
+- A DeepSeek API key
+- Git, if you are cloning the repository
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/KaryouHan/agentic-npc-dialogue.git
+cd agentic-npc-dialogue
+```
+
+### 2. Configure Environment
 
 Copy `.env.example` to `.env` and set your DeepSeek API key:
 
@@ -179,7 +193,11 @@ FRONTEND_ORIGIN=http://localhost:5173
 VITE_API_BASE=http://127.0.0.1:8000
 ```
 
-### 2. Run Backend
+Do not commit `.env`. It is intentionally ignored by Git.
+
+### 3. Run Backend
+
+Open one terminal:
 
 ```bash
 cd backend
@@ -195,7 +213,15 @@ Backend URL:
 http://127.0.0.1:8000
 ```
 
-### 3. Run Frontend
+You can verify it with:
+
+```bash
+curl http://127.0.0.1:8000/api/state
+```
+
+### 4. Run Frontend
+
+Open a second terminal:
 
 ```bash
 cd frontend
@@ -209,6 +235,26 @@ Frontend URL:
 http://localhost:5173
 ```
 
+### Optional: Run With Docker Compose
+
+Docker is optional. The normal development flow is the local backend and frontend commands above.
+
+If you prefer Docker Compose:
+
+```bash
+cp .env.example .env
+# edit .env and set DEEPSEEK_API_KEY
+docker compose up --build
+```
+
+Then open:
+
+```text
+http://localhost:5173
+```
+
+### Troubleshooting
+
 If the project folder is moved, recreate the backend virtual environment because `.venv` contains absolute paths:
 
 ```bash
@@ -217,6 +263,8 @@ python -m venv --clear .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
+
+If port `8000` or `5173` is already in use, stop the old backend/frontend process or run the service on another port and update `VITE_API_BASE` if needed.
 
 ## API Endpoints
 
