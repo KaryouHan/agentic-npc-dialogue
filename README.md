@@ -1,112 +1,58 @@
 # Agentic AI NPC Dialogue System
 
-Agent-based AI NPC dialogue demo for a game scenario: the player meets アリス, a hunted magical girl NPC, inside an abandoned magic academy. アリス owns a key to an underground escape route, but she begins scared and distrustful. The player must earn her trust through free-form dialogue to start the escape quest.
+A full-stack game AI demo that turns an NPC conversation into a stateful agent workflow. The player meets **アリス**, a hunted magical girl hiding inside an abandoned magic academy. She has the key to an underground escape route, but she begins frightened and distrustful. The player must use free-form dialogue to earn her trust, unlock quest progression, and trigger escape-related actions.
 
-## Tech Stack
+This project is designed to demonstrate more than a normal chatbot: the NPC has persistent emotion, memory, quest state, action decisions, and a visible agent decision log.
 
-- Backend: FastAPI
-- Agent workflow: LangGraph
-- LLM: DeepSeek API, OpenAI-compatible client
-- Database: SQLite
-- Frontend: React + Vite
+![Agentic AI NPC Dialogue System Demo](./aaset/demo.png)
 
-## Features
+## Highlights
 
-- Free-form player input
-- Persistent NPC state: fear, trust, anger, quest state, relationship, key ownership
-- Agent pipeline: Memory, Emotion, Action, Quest, Dialogue, State Update
-- Structured JSON responses
-- SQLite conversation history and NPC memory
-- Game-style UI with NPC status, chat, and agent decision log
-- Reset demo button
+- Free-form player dialogue in a game-style UI
+- Japanese NPC replies generated through a DeepSeek OpenAI-compatible API
+- Persistent NPC state: fear, trust, anger, quest state, key ownership, relationship
+- LangGraph workflow with separate Memory, Emotion, Action, Quest, Dialogue, and State Update agents
+- SQLite persistence for dialogue history, memories, and current NPC state
+- Structured JSON response for every turn
+- Frontend Agent Decision Log that exposes the agent workflow for demos and interviews
+- Reset button for replaying the scenario from the initial state
 
-## Project Structure
+## Scenario
+
+The player encounters **アリス** in an abandoned magic academy while she is being hunted. She carries a secret key that opens an underground escape route. Because she is scared and suspicious, she will not immediately trust the player.
+
+The player can type naturally, for example:
 
 ```text
-agentic-npc-dialogue/
-├── backend/
-│   ├── agents/
-│   ├── database.py
-│   ├── graph.py
-│   ├── main.py
-│   ├── npc_state.py
-│   ├── requirements.txt
-│   └── schemas.py
-├── frontend/
-│   ├── src/
-│   ├── index.html
-│   ├── package.json
-│   └── vite.config.js
-├── .env.example
-├── docker-compose.yml
-└── README.md
+私はあなたを助けに来た。
+追っ手から逃げよう。
+その鍵を渡して。
+王国から君を保護するために来た。
 ```
 
-## Setup
+Instead of simply generating a reply, the backend analyzes the message through an agent pipeline and updates アリス's internal state before producing her next line.
 
-### 1. Configure environment
+## Agent Workflow
 
-Copy `.env.example` to `.env` and set your DeepSeek API key:
-
-```bash
-cp .env.example .env
+```text
+User Input
+  ↓
+Memory Agent
+  ↓
+Emotion Agent
+  ↓
+Action Agent
+  ↓
+Quest Agent
+  ↓
+Dialogue Agent
+  ↓
+State Update
+  ↓
+Frontend Display
 ```
 
-```env
-DEEPSEEK_API_KEY=your_deepseek_api_key_here
-DEEPSEEK_MODEL=deepseek-chat
-DEEPSEEK_BASE_URL=https://api.deepseek.com
-DATABASE_URL=sqlite:///./npc_memory.db
-FRONTEND_ORIGIN=http://localhost:5173
-VITE_API_BASE=http://127.0.0.1:8000
-```
-
-### 2. Run backend
-
-```bash
-cd backend
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
-```
-
-### 3. Run frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open the Vite URL, usually `http://localhost:5173`.
-
-If the project folder is moved, recreate the backend virtual environment because `.venv` contains absolute paths:
-
-```bash
-cd backend
-python -m venv --clear .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-## API
-
-### `GET /api/state`
-
-Returns current NPC state and recent dialogue history.
-
-### `POST /api/dialogue`
-
-Request:
-
-```json
-{
-  "message": "私はあなたを助けに来た。"
-}
-```
-
-Response:
+Each turn returns a structured payload:
 
 ```json
 {
@@ -132,9 +78,173 @@ Response:
 }
 ```
 
+## NPC State
+
+Initial state:
+
+```json
+{
+  "name": "アリス",
+  "fear": 80,
+  "trust": 20,
+  "anger": 10,
+  "quest_state": "not_started",
+  "has_key": true,
+  "relationship": "stranger"
+}
+```
+
+Supported quest states:
+
+```text
+not_started / started / key_given / escaped / failed
+```
+
+Supported actions:
+
+```text
+hesitate
+ask_identity
+refuse
+give_key
+follow_player
+reveal_secret
+start_escape_quest
+end_dialogue
+```
+
+## Tech Stack
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | React, Vite, CSS |
+| Backend | Python, FastAPI |
+| Agent workflow | LangGraph |
+| LLM | DeepSeek API through OpenAI-compatible client |
+| Database | SQLite |
+| Runtime config | `.env` |
+
+## Project Structure
+
+```text
+agentic-npc-dialogue/
+├── backend/
+│   ├── agents/
+│   │   ├── action_agent.py
+│   │   ├── dialogue_agent.py
+│   │   ├── emotion_agent.py
+│   │   ├── llm_client.py
+│   │   ├── memory_agent.py
+│   │   └── quest_agent.py
+│   ├── database.py
+│   ├── graph.py
+│   ├── main.py
+│   ├── npc_state.py
+│   ├── requirements.txt
+│   └── schemas.py
+├── frontend/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── api.js
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── styles.css
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.js
+├── aaset/
+│   └── demo.png
+├── .env.example
+├── docker-compose.yml
+└── README.md
+```
+
+## Setup
+
+### 1. Configure Environment
+
+Copy `.env.example` to `.env` and set your DeepSeek API key:
+
+```bash
+cp .env.example .env
+```
+
+```env
+DEEPSEEK_API_KEY=your_deepseek_api_key_here
+DEEPSEEK_MODEL=deepseek-chat
+DEEPSEEK_BASE_URL=https://api.deepseek.com
+DATABASE_URL=sqlite:///./npc_memory.db
+FRONTEND_ORIGIN=http://localhost:5173
+VITE_API_BASE=http://127.0.0.1:8000
+```
+
+### 2. Run Backend
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
+
+Backend URL:
+
+```text
+http://127.0.0.1:8000
+```
+
+### 3. Run Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend URL:
+
+```text
+http://localhost:5173
+```
+
+If the project folder is moved, recreate the backend virtual environment because `.venv` contains absolute paths:
+
+```bash
+cd backend
+python -m venv --clear .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+## API Endpoints
+
+### `GET /api/state`
+
+Returns the current NPC state, recent dialogue history, and stored memories.
+
+### `POST /api/dialogue`
+
+Request:
+
+```json
+{
+  "message": "私はあなたを助けに来た。"
+}
+```
+
+Returns the NPC reply, emotion delta, updated state, selected action, quest update, memory update, and agent decision log.
+
 ### `POST /api/reset`
 
-Resets the demo state and clears memory/history.
+Clears the demo conversation and restores the initial NPC state.
+
+## Why This Project Matters
+
+This demo shows how LLMs can be used as part of a controllable game AI system rather than as a plain chat interface. By separating memory, emotion, action, quest, and dialogue responsibilities, the NPC becomes easier to inspect, debug, and extend.
+
+The visible Agent Decision Log is especially useful for explaining the architecture during interviews or portfolio reviews.
 
 ## Resume Bullet
 
